@@ -1,0 +1,78 @@
+`timescale 1ns/1ps
+module TB_SubnormalNumbers();
+
+parameter DELAY=10;
+reg [31:0] NumberA;
+reg [31:0] NumberB;
+reg A_S;  // zero for add, one for subb
+wire [31:0] Result;
+
+Final Final(NumberA,NumberB,A_S,Result);
+initial
+    begin
+     
+    // Subnormal Case 1:  (7.836622933*10^37) + (1.415084703287774*10^37) = -2.863270299048707*10^36
+    NumberA = 32'b0_00000000_1010_1010_1010_1010_1010_001;
+    NumberB = 32'b0_00000000_1010_1010_1010_1010_1010_101;
+    A_S = 1'b0;
+    #DELAY;
+
+    if(Result == 32'b0_00000001_0101_0101_0101_0101_0100_110 )
+            $display("Subnormal Case 1 passed     ,result is  %b",Result);
+    else
+            $display("Subnormal Case 1 failed     ,result is %b",32'b0_00000001_0101_0101_0101_0101_0100_110 );
+             
+    /*********************************************************************************************************/
+    #DELAY;
+
+   // Subnormal Case 2: 
+    NumberA = 32'b0_00000000_1111_1111_1111_1111_1111_111;
+    NumberB = 32'b1_00000000_0101_0100_1010_1011_0101_010;
+    A_S = 1'b0;
+    #DELAY;
+
+    if(Result == 32'b0_00000000_1010_1011_0101_0100_1010_101 )
+            $display("Subnormal Case 2 passed     ,result is  %b",Result);
+    else
+            $display("Subnormal Case 2 failed     ,result is %b",32'b0_00000000_1010_1011_0101_0100_1010_101  );
+             
+    /*********************************************************************************************************/
+    #DELAY;
+
+    // Subnormal Case 3: 
+     NumberA = 32'b0_00000000_0101_0100_1010_1011_0101_010;
+     NumberB = 32'b1_00000000_1111_1111_1111_1111_1111_111;
+     A_S = 1'b0;
+    #DELAY;
+
+    if(Result == 32'b1_00000000_1010_1011_0101_0100_1010_101  )
+            $display("Subnormal Case 3 passed     ,result is  %b",Result);
+    else
+            $display("Subnormal Case 3 failed     ,result is  %b",32'b1_00000000_1010_1011_0101_0100_1010_101 );
+
+    /*********************************************************************************************************/
+    #DELAY;
+
+   // Subnormal Case 4: 
+     NumberA = 32'b1_00000000_1011_1011_1011_1011_1011_101;
+     NumberB = 32'b1_00000000_0011_1011_1011_1011_1011_101;
+     A_S = 1'b1;
+    #DELAY;
+
+    if(Result == 32'b1_00000000_1000_0000_0000_0000_0000_000  )
+            $display("Subnormal Case 4 passed     ,result is  %b",Result);
+    else
+            $display("Subnormal Case 4 failed     ,result is  %b",32'b1_00000000_1000_0000_0000_0000_0000_000  );
+ 
+
+    /*********************************************************************************************************/
+    #DELAY;
+          
+
+    $stop;
+    end
+
+endmodule
+
+
+
